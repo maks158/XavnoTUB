@@ -1,2 +1,1024 @@
-# XavnoTUB
-XavnoTUB - video hosting
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ХавноТЮБ - Лучшие видосики!</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive;
+            background-color: #f0fff0;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #8A2BE2;
+            color: white;
+            padding: 10px 20px;
+            font-size: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .upload-btn {
+            background-color: #8A2BE2;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .video-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+            justify-content: center;
+        }
+        .video-card {
+            background-color: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            width: 300px;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .video-card:hover {
+            transform: translateY(-5px);
+        }
+        .video-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .video-title {
+            font-weight: bold;
+            margin: 10px 0;
+            color: #333;
+            font-size: 16px;
+        }
+        .video-views {
+            color: #777;
+            font-size: 14px;
+        }
+        .upload-form, .auth-form, .admin-form {
+            background-color: white;
+            padding: 20px;
+            margin: 20px auto;
+            border-radius: 10px;
+            border: 2px solid #8A2BE2;
+            max-width: 500px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: none;
+            position: absolute;
+            top: 70px;
+            left: 20px;
+            z-index: 100;
+        }
+        button {
+            background-color: #8A2BE2;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 5px;
+            transition: background-color 0.3s;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #7B1FA2;
+        }
+        input {
+            padding: 8px;
+            margin: 5px 0;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .video-player {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .video-player-content {
+            width: 80%;
+            max-width: 800px;
+            position: relative;
+        }
+        .close-player {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+        }
+        .username-display {
+            font-weight: bold;
+        }
+        .logout-btn {
+            background-color: #f44336;
+        }
+        .admin-btn {
+            background-color: #FF5722;
+            padding: 8px 15px;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        .delete-btn {
+            background-color: #f44336;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            padding: 5px 8px;
+            font-size: 12px;
+        }
+        .verified-badge {
+            color: #1da1f2;
+            font-size: 14px;
+            margin-left: 5px;
+        }
+        .subscribe-btn {
+            background-color: #4CAF50;
+        }
+        .unsubscribe-btn {
+            background-color: #9E9E9E;
+        }
+        .file-upload {
+            margin: 10px 0;
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #ddd;
+            margin: 10px 0;
+            display: none;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 20px;
+            background-color: #4CAF50;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .admin-panel {
+            display: none;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 1000px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .user-list {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .user-list th, .user-list td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .user-list th {
+            background-color: #8A2BE2;
+            color: white;
+        }
+        .user-list tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .ban-btn {
+            background-color: #f44336;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        .unban-btn {
+            background-color: #4CAF50;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        .reset-btn {
+            background-color: #FFC107;
+            padding: 5px 10px;
+            font-size: 12px;
+            color: #333;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .close-form {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div style="display: flex; align-items: center;">
+            <button class="upload-btn" id="show-upload-form" onclick="toggleUploadForm()">+</button>
+            <h1>ХАВНОТЮБ</h1>
+        </div>
+        <div class="user-actions" id="user-info">
+            <span class="username-display" id="username-display">Гость</span>
+            <span id="verified-badge" class="verified-badge" style="display: none;">✓</span>
+            <button class="admin-btn" onclick="showAdminLogin()" id="admin-button" style="display: none;">Админ</button>
+            <button class="logout-btn" onclick="logout()" style="display: none;">Выйти</button>
+        </div>
+    </header>
+
+    <div id="auth-section">
+        <div class="auth-form" id="login-form">
+            <span class="close-form" onclick="hideAuthForms()">×</span>
+            <h2>Вход</h2>
+            <input type="text" id="login-username" placeholder="Логин" required>
+            <input type="password" id="login-password" placeholder="Пароль" required>
+            <button onclick="login()">Войти</button>
+            <button onclick="showRegisterForm()">Регистрация</button>
+        </div>
+
+        <div class="auth-form" id="register-form">
+            <span class="close-form" onclick="hideAuthForms()">×</span>
+            <h2>Регистрация</h2>
+            <input type="text" id="register-username" placeholder="Логин" required>
+            <input type="password" id="register-password" placeholder="Пароль" required>
+            <button onclick="register()">Зарегистрироваться</button>
+            <button onclick="showLoginForm()">Уже есть аккаунт</button>
+        </div>
+    </div>
+
+    <div class="upload-form" id="upload-form">
+        <span class="close-form" onclick="toggleUploadForm()">×</span>
+        <h2>Загрузить видос</h2>
+        <input type="text" id="video-title" placeholder="Название видоса" required>
+        <input type="text" id="video-url" placeholder="Ссылка на видео (YouTube или другой URL)">
+        <div class="file-upload">
+            <label>Или загрузите с устройства:</label>
+            <input type="file" id="video-file" accept="video/*">
+        </div>
+        <div class="progress-bar" id="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        <button onclick="uploadVideo()">Загрузить!</button>
+    </div>
+
+    <div id="content-section" style="display: none;">
+        <div class="video-container" id="videos">
+            <!-- Видео будут добавляться сюда -->
+        </div>
+    </div>
+
+    <div class="admin-panel" id="admin-panel">
+        <h2>Админ-панель</h2>
+        <button onclick="hideAdminPanel()">Вернуться на сайт</button>
+        <h3>Список пользователей</h3>
+        <table class="user-list">
+            <thead>
+                <tr>
+                    <th>Логин</th>
+                    <th>Подписчики</th>
+                    <th>Загружено видео</th>
+                    <th>Статус</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody id="users-table">
+                <!-- Список пользователей будет здесь -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="video-player" id="video-player">
+        <div class="video-player-content">
+            <span class="close-player" onclick="closeVideoPlayer()">×</span>
+            <video id="video-frame" width="100%" controls></video>
+        </div>
+    </div>
+
+    <div class="modal" id="admin-login-modal">
+        <div class="modal-content">
+            <h2>Вход в админ-панель</h2>
+            <input type="text" id="admin-login" placeholder="Логин" required>
+            <input type="password" id="admin-password" placeholder="Пароль" required>
+            <button onclick="adminLogin()">Войти</button>
+            <button onclick="hideAdminLogin()">Отмена</button>
+        </div>
+    </div>
+
+    <div class="modal" id="ban-modal">
+        <div class="modal-content">
+            <h2>Пользователь заблокирован</h2>
+            <p id="ban-reason">Причина: съемка запрещенного контента</p>
+            <button onclick="hideBanModal()">Понятно</button>
+        </div>
+    </div>
+
+    <script>
+        // Данные пользователей и видео
+        let users = JSON.parse(localStorage.getItem('havnotube_users')) || [];
+        let videos = JSON.parse(localStorage.getItem('havnotube_videos')) || [];
+        let currentUser = null;
+        let adminMode = false;
+
+        // Админ по умолчанию
+        if (!users.some(u => u.username === 'Xavnotub')) {
+            users.push({
+                username: 'Xavnotub',
+                password: '12344321',
+                isAdmin: true,
+                uploadedVideos: [],
+                subscribers: [],
+                likedVideos: []
+            });
+            localStorage.setItem('havnotube_users', JSON.stringify(users));
+        }
+
+        // Проверяем, есть ли залогиненный пользователь
+        function checkAuth() {
+            const loggedInUser = localStorage.getItem('havnotube_currentUser');
+            if (loggedInUser) {
+                currentUser = JSON.parse(loggedInUser);
+                
+                // Проверяем, не забанен ли пользователь
+                const userData = users.find(u => u.username === currentUser.username);
+                if (userData && userData.isBanned) {
+                    showBanModal(userData.banReason);
+                    logout();
+                    return;
+                }
+                
+                updateUI();
+            } else {
+                hideAuthForms();
+            }
+        }
+
+        // Обновляем интерфейс в зависимости от авторизации
+        function updateUI() {
+            if (currentUser) {
+                document.getElementById('auth-section').style.display = 'none';
+                document.getElementById('content-section').style.display = 'block';
+                document.getElementById('username-display').textContent = currentUser.username;
+                document.querySelector('.logout-btn').style.display = 'block';
+                
+                // Показываем кнопку админа, если пользователь админ
+                const user = users.find(u => u.username === currentUser.username);
+                if (user && user.isAdmin) {
+                    document.getElementById('admin-button').style.display = 'block';
+                } else {
+                    document.getElementById('admin-button').style.display = 'none';
+                }
+                
+                // Показываем галочку верификации, если у пользователя есть подписчики
+                if (user && user.subscribers && user.subscribers.length > 0) {
+                    document.getElementById('verified-badge').style.display = 'inline';
+                } else {
+                    document.getElementById('verified-badge').style.display = 'none';
+                }
+                
+                displayVideos();
+            } else {
+                document.getElementById('auth-section').style.display = 'block';
+                document.getElementById('content-section').style.display = 'none';
+                document.getElementById('login-form').style.display = 'block';
+                document.getElementById('register-form').style.display = 'none';
+                document.getElementById('username-display').textContent = 'Гость';
+                document.querySelector('.logout-btn').style.display = 'none';
+                document.getElementById('verified-badge').style.display = 'none';
+                document.getElementById('admin-button').style.display = 'none';
+            }
+            
+            // Скрываем админ-панель, если не в админ-режиме
+            if (!adminMode) {
+                document.getElementById('admin-panel').style.display = 'none';
+            }
+            
+            // Скрываем форму загрузки
+            document.getElementById('upload-form').style.display = 'none';
+        }
+
+        // Показываем/скрываем форму загрузки
+        function toggleUploadForm() {
+            if (!currentUser) {
+                showLoginForm();
+                return;
+            }
+            
+            const form = document.getElementById('upload-form');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Показываем форму регистрации
+        function showRegisterForm() {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('register-form').style.display = 'block';
+        }
+
+        // Показываем форму входа
+        function showLoginForm() {
+            document.getElementById('register-form').style.display = 'none';
+            document.getElementById('login-form').style.display = 'block';
+        }
+
+        // Скрываем все формы авторизации
+        function hideAuthForms() {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('register-form').style.display = 'none';
+        }
+
+        // Показываем модальное окно входа в админку
+        function showAdminLogin() {
+            document.getElementById('admin-login-modal').style.display = 'flex';
+        }
+
+        // Скрываем модальное окно входа в админку
+        function hideAdminLogin() {
+            document.getElementById('admin-login-modal').style.display = 'none';
+        }
+
+        // Показываем модальное окно бана
+        function showBanModal(reason) {
+            document.getElementById('ban-reason').textContent = `Причина: ${reason || 'нарушение правил сайта'}`;
+            document.getElementById('ban-modal').style.display = 'flex';
+        }
+
+        // Скрываем модальное окно бана
+        function hideBanModal() {
+            document.getElementById('ban-modal').style.display = 'none';
+        }
+
+        // Вход в админ-панель
+        function adminLogin() {
+            const login = document.getElementById('admin-login').value;
+            const password = document.getElementById('admin-password').value;
+            
+            if (login === 'admin' && password === '12344321') {
+                adminMode = true;
+                hideAdminLogin();
+                showAdminPanel();
+            } else {
+                const user = users.find(u => u.username === login && u.password === password && u.isAdmin);
+                if (user) {
+                    adminMode = true;
+                    hideAdminLogin();
+                    showAdminPanel();
+                } else {
+                    alert("Неверные данные администратора!");
+                }
+            }
+        }
+
+        // Показываем админ-панель
+        function showAdminPanel() {
+            document.getElementById('content-section').style.display = 'none';
+            document.getElementById('admin-panel').style.display = 'block';
+            updateUsersTable();
+        }
+
+        // Скрываем админ-панель
+        function hideAdminPanel() {
+            adminMode = false;
+            document.getElementById('admin-panel').style.display = 'none';
+            updateUI();
+        }
+
+        // Обновляем таблицу пользователей в админке
+        function updateUsersTable() {
+            const table = document.getElementById('users-table');
+            table.innerHTML = '';
+            
+            users.forEach(user => {
+                if (user.username === 'admin') return; // Не показываем самого админа
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.username}</td>
+                    <td>${user.subscribers ? user.subscribers.length : 0}</td>
+                    <td>${user.uploadedVideos ? user.uploadedVideos.length : 0}</td>
+                    <td>${user.isBanned ? 'Забанен' : 'Активен'}</td>
+                    <td>
+                        ${user.isBanned ? 
+                            `<button class="unban-btn" onclick="unbanUser('${user.username}')">Разбанить</button>` : 
+                            `<button class="ban-btn" onclick="banUser('${user.username}')">Забанить</button>`}
+                        <button class="reset-btn" onclick="resetUserStats('${user.username}')">Обнулить</button>
+                    </td>
+                `;
+                table.appendChild(row);
+            });
+        }
+
+        // Баним пользователя
+        function banUser(username) {
+            const reason = prompt("Введите причину бана:", "Съемка запрещенного контента");
+            if (reason === null) return;
+            
+            const user = users.find(u => u.username === username);
+            if (user) {
+                user.isBanned = true;
+                user.banReason = reason;
+                localStorage.setItem('havnotube_users', JSON.stringify(users));
+                
+                // Если забанен текущий пользователь - разлогиниваем его
+                if (currentUser && currentUser.username === username) {
+                    showBanModal(reason);
+                    logout();
+                }
+                
+                updateUsersTable();
+            }
+        }
+
+        // Разбаниваем пользователя
+        function unbanUser(username) {
+            const user = users.find(u => u.username === username);
+            if (user) {
+                user.isBanned = false;
+                user.banReason = '';
+                localStorage.setItem('havnotube_users', JSON.stringify(users));
+                updateUsersTable();
+            }
+        }
+
+        // Обнуляем статистику пользователя
+        function resetUserStats(username) {
+            if (!confirm(`Обнулить статистику пользователя ${username}?`)) return;
+            
+            const user = users.find(u => u.username === username);
+            if (user) {
+                // Удаляем все видео пользователя
+                videos = videos.filter(video => video.author !== username);
+                localStorage.setItem('havnotube_videos', JSON.stringify(videos));
+                
+                // Обнуляем статистику
+                user.uploadedVideos = [];
+                user.subscribers = [];
+                user.likedVideos = [];
+                
+                // Обновляем подписки других пользователей
+                users.forEach(u => {
+                    if (u.subscriptions) {
+                        u.subscriptions = u.subscriptions.filter(sub => sub !== username);
+                    }
+                });
+                
+                localStorage.setItem('havnotube_users', JSON.stringify(users));
+                updateUsersTable();
+                
+                if (currentUser && currentUser.username === username) {
+                    updateUI();
+                }
+            }
+        }
+
+        // Регистрация нового пользователя
+        function register() {
+            const username = document.getElementById('register-username').value;
+            const password = document.getElementById('register-password').value;
+
+            if (!username || !password) {
+                alert("Заполните все поля!");
+                return;
+            }
+
+            if (users.some(user => user.username === username)) {
+                alert("Пользователь с таким именем уже существует!");
+                return;
+            }
+
+            users.push({
+                username,
+                password,
+                uploadedVideos: [],
+                subscribers: [],
+                likedVideos: [],
+                isBanned: false
+            });
+
+            localStorage.setItem('havnotube_users', JSON.stringify(users));
+            alert("Регистрация успешна! Теперь войдите.");
+            showLoginForm();
+        }
+
+        // Вход пользователя
+        function login() {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            const user = users.find(user => user.username === username && user.password === password);
+            
+            if (user) {
+                if (user.isBanned) {
+                    showBanModal(user.banReason);
+                    return;
+                }
+                
+                currentUser = {
+                    username: user.username,
+                    isAdmin: user.isAdmin || false
+                };
+                localStorage.setItem('havnotube_currentUser', JSON.stringify(currentUser));
+                updateUI();
+                hideAuthForms();
+            } else {
+                alert("Неверный логин или пароль!");
+            }
+        }
+
+        // Выход пользователя
+        function logout() {
+            currentUser = null;
+            adminMode = false;
+            localStorage.removeItem('havnotube_currentUser');
+            updateUI();
+        }
+
+        // Загружаем новое видео
+        function uploadVideo() {
+            if (!currentUser) {
+                alert("Сначала войдите в систему!");
+                return;
+            }
+
+            const title = document.getElementById('video-title').value;
+            const url = document.getElementById('video-url').value;
+            const fileInput = document.getElementById('video-file');
+            const file = fileInput.files[0];
+
+            if (!title) {
+                alert("Введите название видео!");
+                return;
+            }
+
+            if (!url && !file) {
+                alert("Укажите ссылку на видео или загрузите файл!");
+                return;
+            }
+
+            if (file) {
+                // Загрузка файла с устройства
+                uploadFile(title, file);
+                return;
+            }
+
+            // Загрузка по ссылке
+            const videoId = generateId();
+            
+            videos.push({
+                id: videoId,
+                title,
+                url,
+                views: 0,
+                likes: 0,
+                likedBy: [],
+                author: currentUser.username,
+                uploadDate: new Date().toLocaleDateString(),
+                isExternal: true
+            });
+
+            // Добавляем видео в список загруженных пользователем
+            const user = users.find(user => user.username === currentUser.username);
+            if (user) {
+                if (!user.uploadedVideos) user.uploadedVideos = [];
+                user.uploadedVideos.push(videoId);
+                localStorage.setItem('havnotube_users', JSON.stringify(users));
+            }
+
+            localStorage.setItem('havnotube_videos', JSON.stringify(videos));
+            displayVideos();
+
+            // Очищаем поля
+            document.getElementById('video-title').value = '';
+            document.getElementById('video-url').value = '';
+            fileInput.value = '';
+            document.getElementById('upload-form').style.display = 'none';
+        }
+
+        // Загрузка файла с устройства
+        function uploadFile(title, file) {
+            const progressBar = document.getElementById('progress-bar');
+            const progress = document.getElementById('progress');
+            
+            progressBar.style.display = 'block';
+            progress.style.width = '0%';
+            
+            // Имитация загрузки (в реальном приложении здесь был бы AJAX-запрос)
+            let progressValue = 0;
+            const interval = setInterval(() => {
+                progressValue += 5;
+                progress.style.width = `${progressValue}%`;
+                
+                if (progressValue >= 100) {
+                    clearInterval(interval);
+                    
+                    // Создаем URL для локального файла
+                    const videoUrl = URL.createObjectURL(file);
+                    const videoId = generateId();
+                    
+                    videos.push({
+                        id: videoId,
+                        title,
+                        url: videoUrl,
+                        views: 0,
+                        likes: 0,
+                        likedBy: [],
+                        author: currentUser.username,
+                        uploadDate: new Date().toLocaleDateString(),
+                        isExternal: false,
+                        fileData: file.name
+                    });
+
+                    // Добавляем видео в список загруженных пользователем
+                    const user = users.find(user => user.username === currentUser.username);
+                    if (user) {
+                        if (!user.uploadedVideos) user.uploadedVideos = [];
+                        user.uploadedVideos.push(videoId);
+                        localStorage.setItem('havnotube_users', JSON.stringify(users));
+                    }
+
+                    localStorage.setItem('havnotube_videos', JSON.stringify(videos));
+                    displayVideos();
+
+                    // Очищаем поля
+                    document.getElementById('video-title').value = '';
+                    document.getElementById('video-url').value = '';
+                    document.getElementById('video-file').value = '';
+                    progressBar.style.display = 'none';
+                    document.getElementById('upload-form').style.display = 'none';
+                    
+                    alert("Видео успешно загружено!");
+                }
+            }, 100);
+        }
+
+        // Отображаем все видео
+        function displayVideos() {
+            const container = document.getElementById('videos');
+            container.innerHTML = '';
+
+            videos.forEach((video, index) => {
+                const videoCard = document.createElement('div');
+                videoCard.className = 'video-card';
+                
+                const isAuthor = currentUser && video.author === currentUser.username;
+                const hasLiked = currentUser && video.likedBy && video.likedBy.includes(currentUser.username);
+                
+                videoCard.innerHTML = `
+                    <img src="${getThumbnail(video)}" alt="${video.title}" onclick="watchVideo(${index})">
+                    ${isAuthor ? `<button class="delete-btn" onclick="deleteVideo('${video.id}', event)">Удалить</button>` : ''}
+                    <div class="video-title">${video.title}</div>
+                    <div class="video-views">👀 ${video.views || 0} | 👍 ${video.likes || 0}</div>
+                    <div>Автор: ${video.author || 'Аноним'} 
+                        ${users.find(u => u.username === video.author)?.subscribers?.length > 0 ? '<span class="verified-badge">✓</span>' : ''}
+                    </div>
+                    ${currentUser && video.author !== currentUser.username ? `
+                        <button class="${isSubscribed(video.author) ? 'unsubscribe-btn' : 'subscribe-btn'}" 
+                                onclick="${isSubscribed(video.author) ? 'unsubscribe' : 'subscribe'}('${video.author}')">
+                            ${isSubscribed(video.author) ? 'Отписаться' : 'Подписаться'}
+                        </button>
+                    ` : ''}
+                    <button onclick="watchVideo(${index})">Смотреть</button>
+                    <button onclick="likeVideo(${index})" ${hasLiked ? 'disabled style="opacity:0.5"' : ''}>
+                        ${hasLiked ? 'Лайк поставлен' : 'Лайк'}
+                    </button>
+                `;
+                container.appendChild(videoCard);
+            });
+        }
+
+        // Проверяем, подписан ли текущий пользователь на автора
+        function isSubscribed(authorUsername) {
+            if (!currentUser) return false;
+            const user = users.find(u => u.username === currentUser.username);
+            return user.subscriptions && user.subscriptions.includes(authorUsername);
+        }
+
+        // Подписаться на автора
+        function subscribe(authorUsername) {
+            if (!currentUser) {
+                alert("Сначала войдите в систему!");
+                return;
+            }
+            
+            const user = users.find(u => u.username === currentUser.username);
+            const author = users.find(u => u.username === authorUsername);
+            
+            if (!user.subscriptions) user.subscriptions = [];
+            if (!author.subscribers) author.subscribers = [];
+            
+            user.subscriptions.push(authorUsername);
+            author.subscribers.push(currentUser.username);
+            
+            localStorage.setItem('havnotube_users', JSON.stringify(users));
+            displayVideos();
+            
+            // Проверяем верификацию автора
+            checkVerification(authorUsername);
+        }
+
+        // Отписаться от автора
+        function unsubscribe(authorUsername) {
+            if (!currentUser) return;
+            
+            const user = users.find(u => u.username === currentUser.username);
+            const author = users.find(u => u.username === authorUsername);
+            
+            if (user.subscriptions) {
+                user.subscriptions = user.subscriptions.filter(sub => sub !== authorUsername);
+            }
+            
+            if (author.subscribers) {
+                author.subscribers = author.subscribers.filter(sub => sub !== currentUser.username);
+            }
+            
+            localStorage.setItem('havnotube_users', JSON.stringify(users));
+            displayVideos();
+            
+            // Проверяем верификацию автора
+            checkVerification(authorUsername);
+        }
+
+        // Проверяем верификацию пользователя (2+ подписчиков)
+        function checkVerification(username) {
+            const user = users.find(u => u.username === username);
+            if (user) {
+                const hasSubscribers = user.subscribers && user.subscribers.length > 2;
+                
+                // Если текущий пользователь - это проверяемый, обновляем UI
+                if (currentUser && currentUser.username === username) {
+                    document.getElementById('verified-badge').style.display = hasSubscribers ? 'inline' : 'none';
+                }
+            }
+        }
+
+        // Смотрим видео (увеличиваем просмотры)
+        function watchVideo(index) {
+            videos[index].views = (videos[index].views || 0) + 2;
+            localStorage.setItem('havnotube_videos', JSON.stringify(videos));
+            
+            const video = videos[index];
+            const player = document.getElementById('video-player');
+            const frame = document.getElementById('video-frame');
+            
+            if (video.isExternal) {
+                if (isYouTubeUrl(video.url)) {
+                    const videoId = getYouTubeId(video.url);
+                    frame.innerHTML = `<iframe width="100%" height="450" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allowfullscreen></iframe>`;
+                } else {
+                    frame.innerHTML = `<iframe width="100%" height="450" src="${video.url}" frameborder="0" allowfullscreen></iframe>`;
+                }
+            } else {
+                frame.innerHTML = `<source src="${video.url}" type="video/mp4">`;
+                frame.load();
+            }
+            
+            player.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Закрываем плеер
+        function closeVideoPlayer() {
+            const player = document.getElementById('video-player');
+            const frame = document.getElementById('video-frame');
+            frame.innerHTML = '';
+            player.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Ставим лайк (1 лайк от 1 пользователя)
+        function likeVideo(index) {
+            if (!currentUser) {
+                alert("Сначала войдите в систему!");
+                return;
+            }
+            
+            const video = videos[index];
+            
+            if (!video.likedBy) video.likedBy = [];
+            
+            if (video.likedBy.includes(currentUser.username)) {
+                alert("Вы уже лайкнули это видео!");
+                return;
+            }
+            
+            video.likes = (video.likes || 0) + 1;
+            video.likedBy.push(currentUser.username);
+            
+            // Добавляем в список лайков пользователя
+            const user = users.find(u => u.username === currentUser.username);
+            if (user) {
+                if (!user.likedVideos) user.likedVideos = [];
+                user.likedVideos.push(video.id);
+            }
+            
+            localStorage.setItem('havnotube_videos', JSON.stringify(videos));
+            localStorage.setItem('havnotube_users', JSON.stringify(users));
+            displayVideos();
+        }
+
+        // Удаляем видео
+        function deleteVideo(videoId, event) {
+            event.stopPropagation();
+            
+            if (!confirm("Удалить это видео?")) return;
+            
+            // Удаляем видео из общего списка
+            videos = videos.filter(video => video.id !== videoId);
+            localStorage.setItem('havnotube_videos', JSON.stringify(videos));
+            
+            // Удаляем видео из списка пользователя
+            const user = users.find(u => u.username === currentUser.username);
+            if (user) {
+                user.uploadedVideos = user.uploadedVideos.filter(id => id !== videoId);
+                localStorage.setItem('havnotube_users', JSON.stringify(users));
+            }
+            
+            // Удаляем из лайков других пользователей
+            users.forEach(u => {
+                if (u.likedVideos) {
+                    u.likedVideos = u.likedVideos.filter(id => id !== videoId);
+                }
+            });
+            
+            localStorage.setItem('havnotube_users', JSON.stringify(users));
+            displayVideos();
+        }
+
+        // Получаем ID YouTube-видео (если ссылка с ютуба)
+        function getYouTubeId(url) {
+            if (!url) return null;
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        // Проверяем, YouTube ли это ссылка
+        function isYouTubeUrl(url) {
+            return url && (url.includes('youtube.com') || url.includes('youtu.be'));
+        }
+
+        // Получаем миниатюру для видео
+        function getThumbnail(video) {
+            if (video.isExternal && isYouTubeUrl(video.url)) {
+                const videoId = getYouTubeId(video.url);
+                return videoId ? `https://img.youtube.com/vi/${videoId}/0.jpg` : 'https://via.placeholder.com/300x180';
+            }
+            return 'https://via.placeholder.com/300x180';
+        }
+
+        // Генерируем ID для видео
+        function generateId() {
+            return Math.random().toString(36).substr(2, 9);
+        }
+
+        // Инициализация при загрузке страницы
+        window.onload = function() {
+            checkAuth();
+        };
+    </script>
+</body>
+</html> 
